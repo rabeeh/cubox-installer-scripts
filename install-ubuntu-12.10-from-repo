@@ -11,11 +11,48 @@ function post {
 }
 
 function download_and_install {
-	curl http://download.solid-run.com/pub/solidrun/cubox/distros/ubuntu/cubox-ubuntu-core-12.10-core-armhf-r1.tar.xz | /usr/bin/tar --overwrite -Jx -C $ROOTFS_DIR
+	curl http://cdimage.ubuntu.com/ubuntu-core/releases/12.10/release/ubuntu-core-12.10-core-armhf.tar.gz | /usr/bin/tar --overwrite -zx -C $ROOTFS_DIR
 	mount -o bind /sys/ $ROOTFS_DIR/sys/
 	mount -o bind /dev/ $ROOTFS_DIR/dev/
 	mount -o bind /dev/pts/ $ROOTFS_DIR/dev/pts/
 	mount -o bind /proc/ $ROOTFS_DIR/proc/
+
+	# Create the boot.scr u-boot script
+	cat > $ROOTFS_DIR/boot/boot.txt << EOF
+setenv bootargs 'console=ttyS0,115200n8 vmalloc=384M root=/dev/mmcblk0p1 video=dovefb:lcd0:1920x1080-32@60-edid clcd.lcd0_enable=1'
+ext4load mmc 0:1 0x02000000 /boot/uImage
+bootm
+EOF
+	echo "Creating boot.scr script"
+	mkimage -T script -C none -n 'CuBox' -d $ROOTFS_DIR/boot/boot.txt $ROOTFS_DIR/boot/boot.scr
+
+	# Get the kernel and modules
+	export KERN_VER=3.6.9-00796-g24b03f8-dirty
+	echo "Downloading the kernel (version $KERN_VER)"
+	curl http://download.solid-run.com/pub/solidrun/cubox/kernel/bin/$KERN_VER/uImage-$KERN_VER > $ROOTFS_DIR/boot/uImage-$KERN_VER
+	ln -f -s uImage-$KERN_VER $ROOTFS_DIR/boot/uImage
+	curl http://download.solid-run.com/pub/solidrun/cubox/kernel/bin/$KERN_VER/modules-$KERN_VER.tar.xz | /usr/bin/tar --overwrite -Jx -C $ROOTFS_DIR
+
+	echo "Setting up ttyS0 serial port terminal"
+	cat > $ROOTFS_DIR/etc/init/ttyS0.conf << EOF
+# ttyS0 - getty
+#
+# This service maintains a getty on ttyS0 from the point the system is
+# started until it is shut down again.
+
+start on stopped rc RUNLEVEL=[2345] and (
+            not-container or
+            container CONTAINER=lxc or
+            container CONTAINER=lxc-libvirt)
+
+stop on runlevel [!2345]
+
+respawn
+exec /sbin/getty -8 115200 ttyS0
+EOF
+
+	echo "Setting up root password (cubox)"
+	echo -e "cubox\ncubox" | chroot $ROOTFS_DIR passwd
 	# Get DNS settings
 	cp /etc/resolv.conf $ROOTFS_DIR/etc/
 	# Setup CuBox repo
@@ -52,20 +89,22 @@ EOF
 	# Now install xubuntu-desktop
 	chroot $ROOTFS_DIR apt-get install -y -qq xubuntu-desktop
 
-	# Set xorg.conf
-	# Set root password - optional
-	# Add user cubox
+	# TODO Set xorg.conf
+	# TODO Add user cubox
 
 	# Cleanup of the upstart issue
 	rm $ROOTFS_DIR/sbin/initctl
 	mv $ROOTFS_DIR/sbin/initctl.orig $ROOTFS_DIR/sbin/initctl
 
 	# Unmount
+	sync
 	umount $ROOTFS_DIR/sys/
 	umount $ROOTFS_DIR/dev/pts/
+	sync
 	umount $ROOTFS_DIR/dev/
+	sync
 	umount $ROOTFS_DIR/proc/
-	
+	sync
 	echo "Installation done. Click any key"
 	read
 }
