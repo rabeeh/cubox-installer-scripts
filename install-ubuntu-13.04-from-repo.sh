@@ -100,12 +100,14 @@ EOF
 		CHC=`cat $TEMP`
 		if [ $CHC == "1" ]; then
 			# Install xubuntu-desktop
+			echo "Installing full Xunbut-desktop. Will download and install about 1.2GB of packages"
 			chroot $ROOTFS_DIR apt-get install -y -qq xubuntu-desktop
 		fi
 		if [ $CHC == "2" ]; then
 			# Install slim+awesome and other packages that are typically needed
+			echo "Installing slim login manager, awesome window manager and other required packages."
 			chroot $ROOTFS_DIR apt-get install -y -qq slim awesome xserver-xorg isc-dhcp-client xterm console-setup nano x11-apps
-			chroot $ROOTFS_DIR apt-get install --no-install-recommends network-manager
+			chroot $ROOTFS_DIR apt-get install --no-install-recommends -y -qq network-manager
 			echo "auto eth0" >> $ROOTFS_DIR/etc/network/interfaces
 			echo "iface eth0 inet dhcp" >> $ROOTFS_DIR/etc/network/interfaces
 
