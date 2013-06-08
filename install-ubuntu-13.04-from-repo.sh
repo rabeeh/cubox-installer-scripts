@@ -95,25 +95,29 @@ EOF
 	echo "Base rootfs is installed. Click any key to go to next menu"
 	read
 	# Now provide more options what else to install
+	TEMP=`mktemp`
 	while [ 1 ]; do
-		dialog --menu "What else ?" 40 120 120 "1" "Install full Xubuntu desktop" "2" "Install slim+Awesome window manager" "3" "Create user cubox (password cubox)" "D" "Done. Wrapup and exit to main menu" 2> $TMP
-		CHOICE=`cat $TMP`
-		if [ $CHOICE == "1" ]; then
+		dialog --menu "What else ?" 40 120 120 "1" "Install full Xubuntu desktop" "2" "Install slim+Awesome window manager" "3" "Create user cubox (password cubox)" "D" "Done. Wrapup and exit to main menu" 2> $TEMP
+		CHC=`cat $TEMP`
+		if [ $CHC == "1" ]; then
 			# Now install xubuntu-desktop
 			chroot $ROOTFS_DIR apt-get install -y -qq xubuntu-desktop
 		fi
-		if [ $CHOICE == "2" ]; then
+		if [ $CHC == "2" ]; then
 			# Now install awesome and xserver-xorg. Probably other packages are missing
 			chroot $ROOTFS_DIR apt-get install -y -qq slim awesome xserver-xorg isc-dhcp-client xterm
+			echo "auto eth0" >> $ROOTFS_DIR/etc/network/interfaces
+			echo "iface eth0 inet dhcp" >> $ROOTFS_DIR/etc/network/interfaces
+
 		fi
-		if [ $CHOICE == "3" ]; then
+		if [ $CHC == "3" ]; then
 			# Create user cubox and it to groups audio and plugdev
 			echo -e "cubox\ncubox\n\n\n\n\n\nY\n" | chroot $ROOTFS_DIR adduser cubox
 			chroot $ROOTFS_DIR addgroup cubox audio
 			chroot $ROOTFS_DIR addgroup cubox plugdev
 		fi
 
-		if [ $CHOICE == "D" ]; then
+		if [ $CHC == "D" ]; then
 			# Now install xubuntu-desktop
 			break
 		fi
