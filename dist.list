@@ -9,6 +9,6 @@ geexbox-armhf-devel	http://download.geexbox.org/binaries/cubox/install-geexbox-d
 ipfire	http://download.solid-run.com/pub/solidrun/cubox/distros/ipfire/install-ipfire	http://www.ipfire.org/	IPFire version 2.13 testing
 u-boot	https://github.com/rabeeh/cubox-installer-scripts/raw/master/install-u-boot	http://www.solid-run.com	Flash U-Boot on SPI flash
 ubuntu-core-12.10	http://download.solid-run.com/pub/solidrun/cubox/distros/ubuntu/install-ubuntu-core-12.10	http://www.ubuntu.com/	Headless Ubuntu core 12.10
-ubuntu-13.04-from-sources	https://github.com/rabeeh/cubox-installer-scripts/raw/master/install-ubuntu-13.04-from-repo	http://www.ubuntu.com/	Headful Xubuntu 12.10 installed from repository
+ubuntu-13.04-from-sources	https://github.com/rabeeh/cubox-installer-scripts/raw/master/install-ubuntu-13.04-from-repo	http://www.ubuntu.com/	Headful Xubuntu 13.04 installed from repository
 xubuntu-12.10-hardfp	http://mirror.solid-run.com/pub/solidrun/cubox/distros/ubuntu/install-xubuntu-12.10	http://www.ubuntu.com	Headful Xubuntu 12.10 (username and password cubox:cubox)
 XilkaX	http://dl.dropbox.com/u/72661517/CuBox/installer/XilkaX/install-XilkaX	http://xilka.com	Xilka lite distribution
