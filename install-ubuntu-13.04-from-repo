@@ -77,9 +77,13 @@ EOF
 	mv /tmp/sources.list $ROOTFS_DIR/etc/apt/sources.list
 
 	chroot $ROOTFS_DIR apt-get update
+	# Install CuBox GLES drivers and Dove xorg driver
 	chroot $ROOTFS_DIR apt-get install -y --force-yes marvell-libgfx xserver-xorg-video-dove
+	# Install CuBox specific xorg.conf and alsa config files
+	chroot $ROOTFS_DIR apt-get install --force-yes -y -qq cubox-alsa-conf xorg-dove-x11-conf
+
 	# Essentials
-	chroot $ROOTFS_DIR apt-get install -y -qq apt-utils dialog lm-sensors iputils-ping net-tools openssh-server
+	chroot $ROOTFS_DIR apt-get install -y -qq apt-utils dialog lm-sensors iputils-ping net-tools openssh-server less
 
 	# Workaround ubuntu upstart issue.
 	mv $ROOTFS_DIR/sbin/initctl $ROOTFS_DIR/sbin/initctl.orig
@@ -88,15 +92,38 @@ EOF
 	# Install a wordlist, otherwise dictionaries-common fails.
 	chroot $ROOTFS_DIR apt-get install -y -qq wamerican-insane
 
-	# Now install xubuntu-desktop
-	chroot $ROOTFS_DIR apt-get install -y -qq xubuntu-desktop
+	echo "Base rootfs is installed. Click any key to go to next menu"
+	read
+	# Now provide more options what else to install
+	while [ 1 ]; do
+		dialog --menu "What else ?" 40 120 120 "1" "Install full Xubuntu desktop" "2" "Install slim+Awesome window manager" "3" "Create user cubox (password cubox)" "D" "Done. Wrapup and exit to main menu" 2> $TMP
+		CHOICE=`cat $TMP`
+		if [ $CHOICE == "1" ]; then
+			# Now install xubuntu-desktop
+			chroot $ROOTFS_DIR apt-get install -y -qq xubuntu-desktop
+		fi
+		if [ $CHOICE == "2" ]; then
+			# Now install awesome and xserver-xorg. Probably other packages are missing
+			chroot $ROOTFS_DIR apt-get install -y -qq slim awesome xserver-xorg isc-dhcp-client xterm
+		fi
+		if [ $CHOICE == "3" ]; then
+			# Create user cubox and it to groups audio and plugdev
+			echo -e "cubox\ncubox\n\n\n\n\n\nY\n" | chroot $ROOTFS_DIR adduser cubox
+			chroot $ROOTFS_DIR addgroup cubox audio
+			chroot $ROOTFS_DIR addgroup cubox plugdev
+		fi
 
-	# TODO Set xorg.conf
-	# TODO Add user cubox
+		if [ $CHOICE == "D" ]; then
+			# Now install xubuntu-desktop
+			break
+		fi
+	done
 
 	# Cleanup of the upstart issue
 	rm $ROOTFS_DIR/sbin/initctl
 	mv $ROOTFS_DIR/sbin/initctl.orig $ROOTFS_DIR/sbin/initctl
+
+	# TODO Cleanup downloaded packages
 
 	# Unmount
 	sync
@@ -107,10 +134,10 @@ EOF
 	sync
 	umount $ROOTFS_DIR/proc/
 	sync
-	echo "Installation done. Click any key"
-	read
 }
 
 pre
 download_and_install
+echo "Installation done. Click any key"
+read
 post
