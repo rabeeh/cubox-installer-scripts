@@ -80,10 +80,10 @@ EOF
 	# Install CuBox GLES drivers and Dove xorg driver
 	chroot $ROOTFS_DIR apt-get install -y --force-yes marvell-libgfx xserver-xorg-video-dove
 	# Install CuBox specific xorg.conf and alsa config files
-	chroot $ROOTFS_DIR apt-get install --force-yes -y -qq cubox-alsa-conf xorg-dove-x11-conf
+	chroot $ROOTFS_DIR apt-get install --force-yes -y cubox-alsa-conf xorg-dove-x11-conf
 
 	# Essentials
-	chroot $ROOTFS_DIR apt-get install -y -qq apt-utils dialog lm-sensors iputils-ping net-tools openssh-server less
+	chroot $ROOTFS_DIR apt-get install -y apt-utils dialog lm-sensors iputils-ping net-tools openssh-server less
 	# Workaround ubuntu upstart issue.
 	mv $ROOTFS_DIR/sbin/initctl $ROOTFS_DIR/sbin/initctl.orig
 	ln -s /bin/true $ROOTFS_DIR/sbin/initctl
@@ -96,25 +96,25 @@ EOF
 	# Now provide more options what else to install
 	TEMP=`mktemp`
 	while [ 1 ]; do
-		dialog --menu "What else ?" 40 120 120 "1" "Install full Xubuntu desktop" "2" "Install slim+Awesome window manager" "3" "Install gstreamer and vmeta drivers" "4" "Create user cubox (password cubox)" "D" "Done. Wrapup and exit to main menu" 2> $TEMP
+		dialog --menu "What else ?" 40 120 120 "1" "Install full Xubuntu desktop (~1.2GB)" "2" "Install slim+Awesome window manager (~200MB)" "3" "Install gstreamer and vmeta drivers" "4" "Create user cubox (password cubox)" "D" "Done. Wrapup and exit to main menu" 2> $TEMP
 		CHC=`cat $TEMP`
 		if [ $CHC == "1" ]; then
 			# Install xubuntu-desktop
 			echo "Installing full Xunbut-desktop. Will download and install about 1.2GB of packages"
-			chroot $ROOTFS_DIR apt-get install -y -qq xubuntu-desktop
+			chroot $ROOTFS_DIR apt-get install -y xubuntu-desktop
 		fi
 		if [ $CHC == "2" ]; then
 			# Install slim+awesome and other packages that are typically needed
 			echo "Installing slim login manager, awesome window manager and other required packages."
-			chroot $ROOTFS_DIR apt-get install -y -qq slim awesome xserver-xorg isc-dhcp-client xterm console-setup nano x11-apps
-			chroot $ROOTFS_DIR apt-get install --no-install-recommends -y -qq network-manager
+			chroot $ROOTFS_DIR apt-get install -y slim awesome xserver-xorg isc-dhcp-client xterm console-setup nano x11-apps
+			chroot $ROOTFS_DIR apt-get install --no-install-recommends -y network-manager
 			echo "auto eth0" >> $ROOTFS_DIR/etc/network/interfaces
 			echo "iface eth0 inet dhcp" >> $ROOTFS_DIR/etc/network/interfaces
 
 		fi
 		if [ $CHC == "3" ]; then
 			# Install awesome and xserver-xorg. Probably other packages are missing
-			chroot $ROOTFS_DIR apt-get install --force-yes -y -qq gstreamer0.10-plugins-bmmxv gstreamer0.10-plugins-marvell gstreamer-tools gstreamer0.10-plugins-good
+			chroot $ROOTFS_DIR apt-get install --force-yes -y gstreamer0.10-plugins-bmmxv gstreamer0.10-plugins-marvell gstreamer-tools gstreamer0.10-plugins-good
 		fi
 		if [ $CHC == "4" ]; then
 			# Create user cubox and it to groups audio and plugdev
