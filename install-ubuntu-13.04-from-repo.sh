@@ -11,6 +11,8 @@ function post {
 }
 
 function download_and_install {
+	# Disable terminal blanking on HDMI port (/dev/tty1)
+	echo -e '\033[9;0]\033[14;0]' > /dev/tty1
 	echo "Grabbing Ubuntu core base image"
 	curl http://cdimage.ubuntu.com/ubuntu-core/releases/13.04/release/ubuntu-core-13.04-core-armhf.tar.gz | /usr/bin/tar --overwrite -zx -C $ROOTFS_DIR
 	mount -o bind /sys/ $ROOTFS_DIR/sys/
@@ -28,7 +30,7 @@ EOF
 	mkimage -T script -C none -n 'CuBox' -d $ROOTFS_DIR/boot/boot.txt $ROOTFS_DIR/boot/boot.scr
 
 	# Get the kernel and modules
-	export KERN_VER=3.6.9-00796-g24b03f8-dirty
+	export KERN_VER=3.6.9-00797-g0d7ee41
 	echo "Downloading kernel version $KERN_VER"
 	curl http://download.solid-run.com/pub/solidrun/cubox/kernel/bin/$KERN_VER/uImage-$KERN_VER > $ROOTFS_DIR/boot/uImage-$KERN_VER
 	ln -f -s uImage-$KERN_VER $ROOTFS_DIR/boot/uImage
@@ -91,6 +93,9 @@ EOF
 	# Install a wordlist, otherwise dictionaries-common fails.
 	chroot $ROOTFS_DIR apt-get install -y -qq wamerican-insane
 
+	# Generate localtes
+	chroot $ROOTFS_DIR locale-gen en_US en_US.UTF-8
+	chroot $ROOTFS_DIR dpkg-reconfigure locales 
 	echo "Base rootfs is installed. Click any key to go to next menu"
 	read
 	# Now provide more options what else to install
