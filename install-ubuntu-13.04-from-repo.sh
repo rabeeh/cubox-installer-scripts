@@ -85,7 +85,7 @@ EOF
 	chroot $ROOTFS_DIR apt-get install --force-yes -y cubox-alsa-conf xorg-dove-x11-conf
 
 	# Essentials
-	chroot $ROOTFS_DIR apt-get install -y apt-utils dialog lm-sensors iputils-ping net-tools openssh-server less
+	chroot $ROOTFS_DIR apt-get install -y apt-utils dialog lm-sensors iputils-ping net-tools openssh-server less sudo
 	# Workaround ubuntu upstart issue.
 	mv $ROOTFS_DIR/sbin/initctl $ROOTFS_DIR/sbin/initctl.orig
 	ln -s /bin/true $ROOTFS_DIR/sbin/initctl
