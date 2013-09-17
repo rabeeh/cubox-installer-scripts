@@ -15,7 +15,7 @@ function post {
 
 function download_and_install {
 	curl http://us.mirror.archlinuxarm.org/os/ArchLinuxARM-cubox-latest.tar.gz | /usr/bin/tar -zx -C $ROOTFS_DIR
-	cp $ROOTFS_DIR/boot/boot.scr.mmcblk0p1 $ROOTFS_DIR/boot/boot.scr
+#	cp $ROOTFS_DIR/boot/boot.scr.mmcblk0p1 $ROOTFS_DIR/boot/boot.scr
 }
 
 pre
