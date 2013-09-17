@@ -1,0 +1,19 @@
+function pre {
+	get_ntpdate
+	check_if_partitioned
+	remove_all_partitions
+	create_one_partition ext4
+	mount_partition "-t ext4"
+}
+
+function post {
+	umount_partition
+}
+
+function download_and_install {
+	curl http://download.solid-run.com/pub/solidrun/cubox/distros/ubuntu/cubox-ubuntu-core-12.10-xubuntu-armhf-r1.tar.xz | /usr/bin/tar -Jx -C $ROOTFS_DIR
+}
+
+pre
+download_and_install
+post
