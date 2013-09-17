@@ -3,7 +3,7 @@
 # Name of package, installer script URL, distro URL, and a friendly text for the menus
 # Notice that all the 4 above MUST be separated by a single TAB
 # The menu on the installer will show first and forth column
-arch-hardfp	http://dl.dropbox.com/u/72661517/CuBox/installer/Arch/install-arch	http://www.archlinux.org	ARCH Linux HardFP
+arch-hardfp	https://github.com/rabeeh/cubox-installer-scripts/raw/master/install-arch	http://www.archlinux.org	ARCH Linux HardFP
 debian-hardfp-headless	http://download.solid-run.com/pub/solidrun/cubox/distros/debian/install-debian-hardfp-headless	http://www.debian.org	Debian hardfp headless server (root pswd is 'solidrun')
 geexbox-armhf-devel	http://download.geexbox.org/binaries/cubox/install-geexbox-devel	http://download.openbricks.org/cubox/	GeexBox armhf devel snapshots
 ipfire	http://download.solid-run.com/pub/solidrun/cubox/distros/ipfire/install-ipfire	http://www.ipfire.org/	IPFire version 2.13 testing
