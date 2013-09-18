@@ -2,8 +2,6 @@ function pre {
 	get_ntpdate
 	check_if_partitioned
 	remove_all_partitions
-#	create_two_partitions 200 ext2 ext4
-#	mount_on_top
 	create_one_partition ext3
 	mount_partition "-t ext3"
 }
@@ -15,7 +13,6 @@ function post {
 
 function download_and_install {
 	curl http://us.mirror.archlinuxarm.org/os/ArchLinuxARM-cubox-latest.tar.gz | /usr/bin/tar -zx -C $ROOTFS_DIR
-#	cp $ROOTFS_DIR/boot/boot.scr.mmcblk0p1 $ROOTFS_DIR/boot/boot.scr
 }
 
 pre
