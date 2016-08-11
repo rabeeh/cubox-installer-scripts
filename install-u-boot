@@ -1,8 +1,8 @@
-export UBOOT=http://download.solid-run.com/pub/solidrun/cubox/u-boot/2009.08_5.4.4_SR1/apr-8-2013/u-boot-cubox_hynix_cubox_unified_spi.bin
-export UBOOT_MD5SUM=0fc992d7a63175e8220d323e00549b0b
+export UBOOT=https://www.solid-run.com/download/pub/solidrun/cubox/u-boot/2009.08_5.4.4_SR1/aug-6-2013/u-boot-cubox_hynix_cubox_unified_spi.bin
+export UBOOT_MD5SUM=b5dc1ffe9bea1edb8274a87711139191
 
 function download_and_install {
-	curl $UBOOT > /tmp/u-boot.bin
+	curl -L -k $UBOOT > /tmp/u-boot.bin
 	MD5SUM=`md5sum /tmp/u-boot.bin | cut -f1 -d' '`
 	if [ $MD5SUM != $UBOOT_MD5SUM ]; then
 		echo "md5sum is invalid - $MD5SUM != $UBOOT_MD5SUM"
